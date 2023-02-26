@@ -3,6 +3,8 @@ import Car from '../Domains/Car';
 import ICar from '../Interfaces/ICar';
 import CarService from '../Services/carServices';
 
+const BAD_REQUEST = 'BAD REQUEST';
+
 export default class CarController {
   private req: Request;
   private res: Response;
@@ -22,7 +24,54 @@ export default class CarController {
       this.res.status(201).json(newCar);
       return newCar;
     } catch (error) {
-      return this.res.status(500).json({ message: 'BAD REQUEST' });
+      return this.res.status(500).json({ message: BAD_REQUEST });
+    }
+  }
+
+  public async getAll() {
+    try {
+      const allCar: ICar[] | null = await this.service.getAll();
+
+      if (allCar) {
+        const tranformCars = allCar.map((car) => ({
+          id: car.id,
+          model: car.model,
+          year: car.year,
+          color: car.color,
+          status: car.status,
+          buyValue: car.buyValue,
+          doorsQty: car.doorsQty,
+          seatsQty: car.seatsQty,
+        }));
+        return this.res.status(200).json(tranformCars);
+      }
+      return this.res.status(200).json(allCar);
+    } catch (error) {
+      return this.res.status(500).json({ message: BAD_REQUEST });
+    }
+  }
+
+  public async getOne() {
+    const { id } = this.req.params;
+    try {
+      const car: ICar | null = await this.service.getOne(id);
+
+      if (!car) {
+        return this.res.status(404).json({ message: 'Car not found' });
+      }
+
+      return this.res.status(200).json({
+        id: car.id,
+        model: car.model,
+        year: car.year,
+        color: car.color,
+        status: car.status,
+        buyValue: car.buyValue,
+        doorsQty: car.doorsQty,
+        seatsQty: car.seatsQty,
+      });
+    } catch (error) {
+      return this.res.status(422).json({ message: 'Invalid mongo id' });
     }
   }
 }
