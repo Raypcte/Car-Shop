@@ -37,4 +37,11 @@ export default class CarModel {
     }
     return null;
   }
+
+  public async update(id: string, body: ICar): Promise<ICar | null> {
+    if (id) {
+      return this.model.findOneAndUpdate({ _id: id }, { ...body }, { new: true });
+    }
+    return null;
+  }
 }
