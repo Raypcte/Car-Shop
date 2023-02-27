@@ -15,4 +15,16 @@ export default class MotoService {
     const newMoto = await motoModel.create(moto);    
     return this.createCarDomain(newMoto);
   }
+
+  public async getAll() {
+    const motoModel = new MotoModel();
+    const newMoto = await motoModel.find();    
+    return newMoto;
+  }
+
+  public async getOne(id: string) {
+    const motoModel = new MotoModel();
+    const newMoto = await motoModel.findOne(id);    
+    return newMoto;
+  }
 }

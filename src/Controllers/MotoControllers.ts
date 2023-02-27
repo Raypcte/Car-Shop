@@ -27,4 +27,54 @@ export default class MotoController {
       return this.res.status(500).json({ message: BAD_REQUEST });
     }
   }
+
+  public async getAll() {
+    try {
+      const newMoto: IMotorcycle[] | null = await this.service.getAll();
+      if (newMoto) {
+        const tranformMoto = newMoto.map((moto) => ({
+          id: moto.id,
+          model: moto.model,
+          year: moto.year,
+          color: moto.color,
+          status: moto.status,
+          buyValue: moto.buyValue,
+          category: moto.category,
+          engineCapacity: moto.engineCapacity,
+        }));
+        return this.res.status(200).json(tranformMoto);
+      }
+      this.res.status(200).json(newMoto);
+      return newMoto;
+    } catch (error) {
+      return this.res.status(500).json({ message: BAD_REQUEST });
+    }
+  }
+
+  public async getOne() {
+    const { id } = this.req.params;
+    try {
+      const moto: IMotorcycle | null = await this.service.getOne(id);
+      if (!moto) {
+        return this.res.status(404).json({ message: 'Motorcycle not found' });
+      }
+      if (moto) {
+        const tranformMoto = {
+          id: moto.id,
+          model: moto.model,
+          year: moto.year,
+          color: moto.color,
+          status: moto.status,
+          buyValue: moto.buyValue,
+          category: moto.category,
+          engineCapacity: moto.engineCapacity,
+        };
+        return this.res.status(200).json(tranformMoto);
+      }
+      this.res.status(200).json(moto);
+      return moto;
+    } catch (error) {
+      return this.res.status(422).json({ message: 'Invalid mongo id' });
+    }
+  }
 }
